@@ -1,0 +1,26 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="{% static "stark/bootstrap/css/bootstrap.css" %}" />
+    <link rel="stylesheet" href="{% static "stark/css/stark-form.css" %}" />
+</head>
+<body>
+{#    <h1>修改页面</h1>#}
+{#        <form method="post" novalidate>#}
+{#            {% csrf_token %}#}
+{#            {{ form.as_p }}#}
+{#            <input type="submit" value="提交">#}
+{#        </form>#}
+
+    <div class="container" style="width: 800px;height: 500px">
+        <h1 class="text-center">编辑页面</h1>
+        {% include "stark/form.html" %}
+    </div>
+
+
+
+    </body>
+</html>

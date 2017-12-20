@@ -27,6 +27,26 @@ class UserInfoConfig(v1.StarkConfig):
     model_form_class = UserInfoModelForm
     search_fields = ['name__contains','sex']
 
+    '''actions批量操作相关'''
+    show_actions = True
+    def multi_del(self,request): # 找函数的时候,传了一个request参数
+        print(request.POST.getlist('pk'))
+        pk_list = request.POST.getlist('pk')
+        self.model_class.objects.filter(id__in=pk_list).delete()
+    multi_del.short_desc = '批量删除'
+
+    def multi_init(self,request): # 找函数的时候,传了一个request参数
+        # print(request.POST.getlist('pk'))
+        # pk_list = request.POST.getlist('pk')
+        # self.model_class.objects.filter(id__in=pk_list).delete()
+        return HttpResponse('Do you love me❄️❄️❄️?')
+    multi_init.short_desc = '批量初始化'
+
+
+
+    actions = [multi_del,multi_init] # 只传函数名
+
+
     def extra_url(self):
 
         url_list = [

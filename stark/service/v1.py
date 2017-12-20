@@ -20,6 +20,9 @@ class ChangeList(object):
         self.show_search_form = config.get_show_search_form()
         self.search_form_val = config.request.GET.get(config.search_key, '')
 
+        # actions批量操作相关
+        self.actions = config.get_actions()
+        self.show_actions = config.get_show_actions()
 
         # 分页
         current_page = self.request.GET.get('page', 1)
@@ -44,9 +47,19 @@ class ChangeList(object):
             result.append(verbose_name)
         return result
 
+    '''改造actions'''
+    def modify_actions(self):
+        result = []
+        for func in self.actions:
+            temp = {'name':func.__name__,'text':func.short_desc} # 拿到函数名
+            result.append(temp)
+        return result
+
+
+
+
     def add_url(self):
         return self.config.get_add_url()
-
 
     def body_list(self):
         # 处理表中的数据
@@ -224,7 +237,7 @@ class StarkConfig(object):
                 #name = 'fei' or email = 'fei'
         return condition
 
-    # 5. 定制
+    # 5. 定制批量操作 actions
     show_actions = False
     def get_show_actions(self):
         return self.show_actions
@@ -237,11 +250,21 @@ class StarkConfig(object):
         return result
 
 
-
     # ############# 处理请求的方法 ################
 
     def changelist_view(self, request, *args, **kwargs):
 
+        '''批量actions操作相关'''
+        if request.method == 'POST' and self.get_show_actions():
+            func_name_str = request.POST.get('list_action')
+            # 拿到字符串格式的函数名,通过反射 在self里面找到该函数(跑到stark.py UserInfoConfig里面找到了)
+            action_func = getattr(self,func_name_str)
+            # 加()执行,手动传进去一个request参数.听话.
+            action_func(request)
+            pk_list = request.POST.get('pk')
+            ### 如果没返回值,就继续往下执行
+
+        # 搜索相关
         queryset = self.model_class.objects.filter(self.get_search_condition())
         # print('queryset===',queryset)
         cl = ChangeList(self,queryset)

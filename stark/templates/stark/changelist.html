@@ -28,13 +28,17 @@
 
     <form method="post">
         {% csrf_token %}
-        <div class="form-group">
-            <select class="form-control" style="display: inline-block;width: 200px;" name="" id="">
-                <option value="">批量删除</option>
-                <option value="">批量初始化</option>
-            </select>
-            <button class="btn btn-primary">执行</button>
-        </div>
+        {% if cl.show_actions %}
+            <div class="form-group">
+                <select name="list_action" class="form-control" style="display: inline-block;width: 200px;" name=""
+                        id="">
+                    {% for action in cl.modify_actions %}
+                        <option value="{{ action.name }}">{{ action.text }}</option>
+                    {% endfor %}
+                </select>
+                <button class="btn btn-primary">执行</button>
+            </div>
+        {% endif %}
         <table class="table table-bordered">
             <thead>
             <tr>

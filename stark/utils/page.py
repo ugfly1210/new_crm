@@ -10,7 +10,7 @@ class Pagination(object):
     """
     自定义分页
     """
-    def __init__(self,current_page,total_count,base_url,pamams,per_page_count=10,pager_count=11):
+    def __init__(self,current_page,total_count,base_url,params,per_page_count=10,max_pager_count=11):
         try:
             current_page = int(current_page)
         except Exception as e:
@@ -31,17 +31,17 @@ class Pagination(object):
         self.max_page_num = max_page_num
 
         # 页面上默认显示11个页面（当前页在中间）
-        self.pager_count = pager_count
-        self.half_pager_count = int((pager_count - 1) / 2)
+        self.max_pager_count = max_pager_count
+        self.half_max_pager_count = int((max_pager_count - 1) / 2)
 
         # URL前缀
         self.base_url = base_url
 
 
         import copy
-        self.pamams = copy.deepcopy(pamams)
-        pamams._mutable = True
-        self.pamams = pamams
+        self.params = copy.deepcopy(params)
+        params._mutable = True
+        self.params = params
 
     @property
     def start(self):
@@ -53,39 +53,82 @@ class Pagination(object):
 
     def page_html(self):
         # 如果总页数 <= 11
-        if self.max_page_num <= self.pager_count:
+        if self.max_page_num <= self.max_pager_count:
             pager_start = 1
             pager_end = self.max_page_num
         # 如果总页数 > 11
         else:
             # 如果当前页 <= 5
-            if self.current_page <= self.pager_count:
+            if self.current_page <= self.max_pager_count:
                 pager_start = 1
-                pager_end = self.pager_count
+                pager_end = self.max_pager_count
             else:
                 # 当前页 + 5 > 总页码
-                if (self.current_page + self.pager_count) > self.max_page_num:
+                if (self.current_page + self.max_pager_count) > self.max_page_num:
                     pager_end = self.max_page_num
-                    pager_start = self.max_page_num - self.pager_count + 1
+                    pager_start = self.max_page_num - self.max_pager_count + 1
                 else:
-                    pager_start = self.current_page - self.pager_count
-                    pager_end = self.current_page + self.pager_count
+                    pager_start = self.current_page - self.max_pager_count
+                    pager_end = self.current_page + self.max_pager_count
 
         page_html_list = []
-        self.pamams['page'] = 1
-        first_page = '<li><a href="%s?%s">首页</a></li>'%(self.base_url,self.pamams.urlencode())
+        self.params['page'] = 1
+        first_page = '<li><a href="%s?%s">首页</a></li>'%(self.base_url,self.params.urlencode())
         page_html_list.append(first_page)
         for i in range(pager_start, pager_end + 1):
-            self.pamams['page'] = i
+            self.params['page'] = i
             if i == self.current_page:
-                temp = '<li class="active"><a href="%s?%s">%s</a></li>' % (self.base_url,self.pamams.urlencode(), i,)
+                temp = '<li class="active"><a href="%s?%s">%s</a></li>' % (self.base_url,self.params.urlencode(), i,)
             else:
-                temp = '<li><a href="%s?%s">%s</a></li>' % (self.base_url,self.pamams.urlencode(), i,)
+                temp = '<li><a href="%s?%s">%s</a></li>' % (self.base_url,self.params.urlencode(), i,)
             page_html_list.append(temp)
 
         #尾页
-        self.pamams['page'] = self.max_page_num
-        end_page = '<li><a href="%s?%s">尾页</a></li>' % (self.base_url,self.pamams.urlencode(),)
+        self.params['page'] = self.max_page_num
+        end_page = '<li><a href="%s?%s">尾页</a></li>' % (self.base_url,self.params.urlencode(),)
         page_html_list.append(end_page)
+
+        return ''.join(page_html_list)
+
+    def bootstrap_page_html(self):
+        # 如果总页数 <= 11
+        if self.max_page_num <= self.max_pager_count:
+            pager_start = 1
+            pager_end = self.max_page_num
+        # 如果总页数 > 11
+        else:
+            # 如果当前页 <= 5
+            if self.current_page <= self.half_max_pager_count:
+                pager_start = 1
+                pager_end = self.max_pager_count
+            else:
+                # 当前页 + 5 > 总页码
+                if (self.current_page + self.half_max_pager_count) > self.max_page_num:
+                    pager_end = self.max_page_num
+                    pager_start = self.max_page_num - self.max_pager_count + 1
+                else:
+                    pager_start = self.current_page - self.half_max_pager_count
+                    pager_end = self.current_page + self.half_max_pager_count
+
+        page_html_list = []
+        # {source:[2,], status:[2], gender:[2],consultant:[1],page:[1]}
+        self.params['page'] = 1
+        first_page = '<li><a href="%s?%s">首页</a></li>' % (self.base_url, self.params.urlencode(),)
+        page_html_list.append(first_page)
+        # 上一页
+
+        for i in range(pager_start, pager_end + 1):
+            self.params['page'] = i
+            if i == self.current_page:
+                temp = '<li class="active" ><a href="%s?%s">%s</a></li>' % (self.base_url, self.params.urlencode(), i,)
+            else:
+                temp = '<li><a href="%s?%s">%s</a></li>' % (self.base_url, self.params.urlencode(), i,)
+            page_html_list.append(temp)
+
+        # 下一页
+
+        self.params['page'] = self.max_page_num
+        last_page = '<li><a href="%s?%s">尾页</a></li>' % (self.base_url, self.params.urlencode(),)
+        page_html_list.append(last_page)
 
         return ''.join(page_html_list)

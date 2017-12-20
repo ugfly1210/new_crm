@@ -20,7 +20,12 @@ class UserInfoModelForm(ModelForm):
 
 class UserInfoConfig(v1.StarkConfig):
 
-    list_display = ['id', 'name']
+    list_display = ['id', 'name','age','sex']
+
+    show_add_btn = True
+    show_search_form = True
+    model_form_class = UserInfoModelForm
+    search_fields = ['name__contains','sex']
 
     def extra_url(self):
 

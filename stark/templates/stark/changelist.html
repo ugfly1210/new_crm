@@ -6,44 +6,61 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Title</title>
-    <link rel="stylesheet" href="{% static "stark/bootstrap/css/bootstrap.css" %}" />
+    <link rel="stylesheet" href="{% static "stark/bootstrap/css/bootstrap.css" %}"/>
 
 </head>
 <body>
-    <div class="container">
+<div class="container">
     <h1>列表页面</h1>
-
-    {% if show_add_btn %}
-        <a class="btn btn-primary" href="{{ add_url }}">增加</a>
+    {% if cl.show_search_form %}
+        <div class="form-group">
+            <form method="get">
+                <input name="{{ cl.config.search_key }}" value="{{ cl.search_form_val }}" class="form-control"
+                       placeholder="请输入搜索条件" type="text" style="display:inline-block;width: 200px;"/>
+                <button class="btn btn-primary"><span class="glyphicon glyphicon-search"></span></button>
+            </form>
+        </div>
     {% endif %}
 
+    {% if cl.show_add_btn %}
+        <a class="btn btn-primary" href="{{ cl.add_url }}">增加</a>
+    {% endif %}
 
-    <table class="table table-bordered">
-        <thead>
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <select class="form-control" style="display: inline-block;width: 200px;" name="" id="">
+                <option value="">批量删除</option>
+                <option value="">批量初始化</option>
+            </select>
+            <button class="btn btn-primary">执行</button>
+        </div>
+        <table class="table table-bordered">
+            <thead>
             <tr>
-                {% for item in head_list %}
+                {% for item in cl.head_list %}
                     <th>{{ item }}</th>
                 {% endfor %}
             </tr>
-        </thead>
-        <tbody>
-            {% for obj in data_list %}
+            </thead>
+            <tbody>
+            {% for obj in cl.body_list %}
                 <tr>
                     {% for col in obj %}
                         <td>{{ col }}</td>
                     {% endfor %}
                 </tr>
             {% endfor %}
-        </tbody>
-    </table>
-    </div>
+            </tbody>
+        </table>
+    </form>
+</div>
 
-    <nav aria-label="Page navigation" >
-        <ul class="pagination">
-        {{ page_html|safe }}
-        </ul>
-    </nav>
-
+<nav aria-label="Page navigation">
+    <ul class="pagination">
+        {{ cl.page_obj.bootstrap_page_html|safe }}
+    </ul>
+</nav>
 
 
 </body>

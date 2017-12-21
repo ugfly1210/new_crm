@@ -2,10 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="6228dd7b-f0a0-4238-837a-5d4872a54a46" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/app02/stark.py" afterPath="$PROJECT_DIR$/app02/stark.py" />
-      <change beforePath="$PROJECT_DIR$/crm/settings.py" afterPath="$PROJECT_DIR$/crm/settings.py" />
-      <change beforePath="$PROJECT_DIR$/db.sqlite3" afterPath="$PROJECT_DIR$/db.sqlite3" />
       <change beforePath="$PROJECT_DIR$/stark/service/v1.py" afterPath="$PROJECT_DIR$/stark/service/v1.py" />
       <change beforePath="$PROJECT_DIR$/stark/templates/stark/changelist.html" afterPath="$PROJECT_DIR$/stark/templates/stark/changelist.html" />
     </list>
@@ -36,15 +32,15 @@
       <file leaf-file-name="v1.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/stark/service/v1.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="287">
-              <caret line="32" column="57" lean-forward="false" selection-start-line="32" selection-start-column="57" selection-end-line="32" selection-end-column="57" />
+            <state relative-caret-position="189">
+              <caret line="44" column="45" lean-forward="false" selection-start-line="44" selection-start-column="45" selection-end-line="44" selection-end-column="45" />
               <folding>
                 <element signature="e#0#11#0" expanded="true" />
-                <element signature="e#3368#4119#0" expanded="false" />
-                <element signature="e#4125#4142#0" expanded="false" />
-                <element signature="e#6155#6319#1" expanded="false" />
-                <element signature="e#10675#11543#0" expanded="false" />
-                <element signature="e#15374#16496#0" expanded="false" />
+                <element signature="e#4337#5088#0" expanded="false" />
+                <element signature="e#5094#5111#0" expanded="false" />
+                <element signature="e#7124#7288#1" expanded="false" />
+                <element signature="e#11632#12500#0" expanded="false" />
+                <element signature="e#16331#17453#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -53,8 +49,18 @@
       <file leaf-file-name="changelist.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/stark/templates/stark/changelist.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="341">
-              <caret line="20" column="21" lean-forward="false" selection-start-line="20" selection-start-column="21" selection-end-line="20" selection-end-column="21" />
+            <state relative-caret-position="295">
+              <caret line="18" column="25" lean-forward="false" selection-start-line="18" selection-start-column="25" selection-end-line="18" selection-end-column="25" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="page.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/stark/utils/page.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="172">
+              <caret line="41" column="0" lean-forward="false" selection-start-line="41" selection-start-column="0" selection-end-line="41" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -110,6 +116,7 @@
       <find>key_word</find>
       <find>search_key</find>
       <find>option</find>
+      <find>111</find>
     </findStrings>
     <replaceStrings>
       <replace>params</replace>
@@ -332,11 +339,11 @@
           <caret line="92" column="3" lean-forward="false" selection-start-line="92" selection-start-column="3" selection-end-line="92" selection-end-column="3" />
           <folding>
             <element signature="e#0#11#0" expanded="true" />
-            <element signature="e#3368#4119#0" expanded="false" />
-            <element signature="e#4125#4142#0" expanded="false" />
-            <element signature="e#6155#6319#1" expanded="false" />
-            <element signature="e#10675#11543#0" expanded="false" />
-            <element signature="e#15374#16496#0" expanded="false" />
+            <element signature="e#4337#5088#0" expanded="false" />
+            <element signature="e#5094#5111#0" expanded="false" />
+            <element signature="e#7124#7288#1" expanded="false" />
+            <element signature="e#11632#12500#0" expanded="false" />
+            <element signature="e#16331#17453#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -371,11 +378,11 @@
           <caret line="79" column="38" lean-forward="true" selection-start-line="79" selection-start-column="38" selection-end-line="79" selection-end-column="38" />
           <folding>
             <element signature="e#0#11#0" expanded="true" />
-            <element signature="e#3368#4119#0" expanded="false" />
-            <element signature="e#4125#4142#0" expanded="false" />
-            <element signature="e#6155#6319#1" expanded="false" />
-            <element signature="e#10675#11543#0" expanded="false" />
-            <element signature="e#15374#16496#0" expanded="false" />
+            <element signature="e#4337#5088#0" expanded="false" />
+            <element signature="e#5094#5111#0" expanded="false" />
+            <element signature="e#7124#7288#1" expanded="false" />
+            <element signature="e#11632#12500#0" expanded="false" />
+            <element signature="e#16331#17453#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -394,11 +401,11 @@
           <caret line="269" column="27" lean-forward="false" selection-start-line="269" selection-start-column="27" selection-end-line="269" selection-end-column="27" />
           <folding>
             <element signature="e#0#11#0" expanded="true" />
-            <element signature="e#3368#4119#0" expanded="false" />
-            <element signature="e#4125#4142#0" expanded="false" />
-            <element signature="e#6155#6319#1" expanded="false" />
-            <element signature="e#10675#11543#0" expanded="false" />
-            <element signature="e#15374#16496#0" expanded="false" />
+            <element signature="e#4337#5088#0" expanded="false" />
+            <element signature="e#5094#5111#0" expanded="false" />
+            <element signature="e#7124#7288#1" expanded="false" />
+            <element signature="e#11632#12500#0" expanded="false" />
+            <element signature="e#16331#17453#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -478,14 +485,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/stark/utils/page.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="281">
-          <caret line="94" column="41" lean-forward="true" selection-start-line="94" selection-start-column="41" selection-end-line="94" selection-end-column="41" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/stark/templates/stark/add_view.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="368">
@@ -528,23 +527,31 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/stark/templates/stark/changelist.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="341">
-          <caret line="20" column="21" lean-forward="false" selection-start-line="20" selection-start-column="21" selection-end-line="20" selection-end-column="21" />
+        <state relative-caret-position="295">
+          <caret line="18" column="25" lean-forward="false" selection-start-line="18" selection-start-column="25" selection-end-line="18" selection-end-column="25" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/stark/utils/page.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="172">
+          <caret line="41" column="0" lean-forward="false" selection-start-line="41" selection-start-column="0" selection-end-line="41" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/stark/service/v1.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="287">
-          <caret line="32" column="57" lean-forward="false" selection-start-line="32" selection-start-column="57" selection-end-line="32" selection-end-column="57" />
+        <state relative-caret-position="189">
+          <caret line="44" column="45" lean-forward="false" selection-start-line="44" selection-start-column="45" selection-end-line="44" selection-end-column="45" />
           <folding>
             <element signature="e#0#11#0" expanded="true" />
-            <element signature="e#3368#4119#0" expanded="false" />
-            <element signature="e#4125#4142#0" expanded="false" />
-            <element signature="e#6155#6319#1" expanded="false" />
-            <element signature="e#10675#11543#0" expanded="false" />
-            <element signature="e#15374#16496#0" expanded="false" />
+            <element signature="e#4337#5088#0" expanded="false" />
+            <element signature="e#5094#5111#0" expanded="false" />
+            <element signature="e#7124#7288#1" expanded="false" />
+            <element signature="e#11632#12500#0" expanded="false" />
+            <element signature="e#16331#17453#0" expanded="false" />
           </folding>
         </state>
       </provider>

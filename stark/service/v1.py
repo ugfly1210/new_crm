@@ -25,18 +25,37 @@ class FilterOption:
         return _field.choices
 
 class FilterRow(object):
-    def __init__(self,option,data,params):  # params是request.GET那个参数就是querydict对象
+    # def __init__(self,option,data,params):  # params是request.GET那个参数就是querydict对象
+    def __init__(self,option,data,request):
         self.data = data
         self.option = option
-        self.params = copy.deepcopy(params) # 防止数据变动,使用深拷贝
+        self.request = request         # 防止数据变动,使用深拷贝
     def __iter__(self):
-        yield mark_safe('<a href="{0}">全部</a>'.format(111))
+        params = copy.deepcopy(self.request.GET) # 用户请求发来的数据
+        # 要想动态,就给它设置属性
+        params._mutable = True
+        current_id = params.get(self.option.field_name)
+        '''如果用户请求发来的值,和我循环过程的值一样就表示它被选中,就要加active'''
+
+        #点击全部后,要把后面响应数据去掉
+        if self.option.field_name in params:
+            del params[self.option.field_name]
+        else: # 否则,就是用户并没有选择任何选项,就应该是全部
+            url = "{0}?{1}".format(self.request.path_info,params.urlencode())
+            yield mark_safe('<a class="active" href="{0}">全部</a>'.format(url))
+        '''以下都是处理url,用户点选之后,得到的url'''
+        # ((1,'n',2,'nv'))
         for val in self.data:
             if self.option.is_choice:
-                pk,text = val # 这样就表示它是choice选项  ,这里是为了将((1,'男'),(2,'女')) 的id和text拿到
+                pk,text = str(val[0]),val[1] # 这样就表示它是choice选项  ,这里是为了将((1,'男'),(2,'女')) 的id和text拿到
             else: # 它就是一个对象了
-                pk,text = val.pk,str(val)
-            yield mark_safe("<a href='{0}'>{1}</a>".format(url,text))
+                pk,text = str(val.pk),str(val)  # 这里给pk变为字符串是为了和用户发来的curent_id对比,看是否是被选中
+            params[self.option.field_name] = pk  # 我只拿我当前field_name对应的值,其他的我不管
+            url = "{0}?{1}".format(self.request.path_info,params.urlencode())
+            if current_id == pk:
+                yield mark_safe("<a class='active' href='{0}'>{1}</a>".format(url, text))  # 路径获取完成
+            else:
+                yield mark_safe("<a href='{0}'>{1}</a>".format(url,text)) # 路径获取完成
 
 class ChangeList(object):
     def __init__(self,config,queryset):
@@ -169,12 +188,12 @@ class ChangeList(object):
                 # 获取当前字段depart关联的表,并拿到所有字段. 是FK,
                 # print(_field.rel) # <ManyToOneRel: app02.userinfo>
                 # print(_field.rel.to) # <class 'app02.models.Department'>找到关联的表了 通过.objects.all()拿到所有字段
-                row = FilterRow(option,option.get_queryset(_field),self.request.GET)  # 这里加FilterRow,是为了吧数据封装成FilterRow对象
+                row = FilterRow(option,option.get_queryset(_field),self.request)  # 这里加FilterRow,是为了把数据封装成FilterRow对象
             elif isinstance(_field,ManyToManyField):
                 # data_list.append( FilterRow(_field.rel.to.objects.all()) )
-                row = FilterRow(option,option.get_queryset(_field),self.request.GET)
+                row = FilterRow(option,option.get_queryset(_field),self.request)
             else:
-                row = FilterRow(option,option.get_choices(_field),self.request.GET)
+                row = FilterRow(option,option.get_choices(_field),self.request)
         # 拿到所有的数据后,如何让它显示?   前端for循环两次拿得到
             yield row  # 可迭代对象, 对应该函数, 为什么它是可迭代对象,应为你看FilterRow. 它有__iter__方法
 class StarkConfig(object):

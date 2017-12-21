@@ -7,12 +7,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Title</title>
     <link rel="stylesheet" href="{% static "stark/bootstrap/css/bootstrap.css" %}"/>
-
+    <style>
+        .list_filter a{
+            display: inline-block;
+            padding: 3px 6px;
+            border: 1px solid #2b669a;
+            margin: 3px 0;
+        }
+        .list_filter a.active{
+            background-color: #5bc0de;
+            color: white;
+        }
+    </style>
 </head>
 <body>
 <div class="container">
     <h1>列表页面</h1>
-<div>
+<div class="list_filter">
     {% for filter_row in cl.gen_comb_filter %}
 {#        这里的cl.gen_comb_filter对应后台返回的data_list#}
 {#        这里遍历粗来的都是filter_row瑞祥#}

@@ -12,6 +12,18 @@
 <body>
 <div class="container">
     <h1>列表页面</h1>
+<div>
+    {% for filter_row in cl.gen_comb_filter %}
+{#        这里的cl.gen_comb_filter对应后台返回的data_list#}
+{#        这里遍历粗来的都是filter_row瑞祥#}
+        <div>
+        {% for col in filter_row %}
+            {{ col }}
+        {% endfor %}
+
+        </div>
+    {% endfor %}
+</div>
     {% if cl.show_search_form %}
         <div class="form-group">
             <form method="get">

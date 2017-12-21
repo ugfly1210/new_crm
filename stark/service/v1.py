@@ -1,3 +1,4 @@
+import copy
 from django.conf.urls import url,include
 from django.shortcuts import HttpResponse,render,reverse,redirect
 from django.utils.safestring import mark_safe
@@ -5,6 +6,37 @@ from django.forms import ModelForm
 from stark.utils.page import Pagination
 from django.http import QueryDict
 from django.db.models import Q
+
+class FilterOption:
+    def __init__(self,field_name,multi=False,condition=None,is_choice=False): # condition是删选条件,比如我们只想让用户看到非全部部门
+        self.field_name = field_name
+        self.multi = multi
+        self.is_choice = is_choice
+
+        self.condition = condition
+    '''接下来的两个函数,就可以通过自定制获取数据库的数据,还可以'''
+    # 筛选条件,condition存在在(FK,M2M),注释同condition注释中
+    def get_queryset(self,_field):
+        if self.condition:
+            return _field.rel.to.objects.filter(self.condition)
+        return _field.rel.to.objects.all()
+
+    def get_choices(self,_field):
+        return _field.choices
+
+class FilterRow(object):
+    def __init__(self,option,data,params):  # params是request.GET那个参数就是querydict对象
+        self.data = data
+        self.option = option
+        self.params = copy.deepcopy(params) # 防止数据变动,使用深拷贝
+    def __iter__(self):
+        yield mark_safe('<a href="{0}">全部</a>'.format(111))
+        for val in self.data:
+            if self.option.is_choice:
+                pk,text = val # 这样就表示它是choice选项  ,这里是为了将((1,'男'),(2,'女')) 的id和text拿到
+            else: # 它就是一个对象了
+                pk,text = val.pk,str(val)
+            yield mark_safe("<a href='{0}'>{1}</a>".format(url,text))
 
 class ChangeList(object):
     def __init__(self,config,queryset):
@@ -23,6 +55,9 @@ class ChangeList(object):
         # actions批量操作相关
         self.actions = config.get_actions()
         self.show_actions = config.get_show_actions()
+
+        # 组合搜索
+        self.comb_filter = config.get_comb_filter()
 
         # 分页
         current_page = self.request.GET.get('page', 1)
@@ -56,8 +91,6 @@ class ChangeList(object):
         return result
 
 
-
-
     def add_url(self):
         return self.config.get_add_url()
 
@@ -81,6 +114,69 @@ class ChangeList(object):
         # print('new_data_list===',new_data_list)
         return new_data_list
 
+    # # 组合搜索 return版本
+    # def gen_comb_filter(self):
+    #     '''它返回什么,页面就看到什么'''
+    #     # comb_filter = ['gender','depart','roles']
+    #     data_list = []
+    #     # 里面有三个对象.一个是大元祖,两个列表
+    #     from django.db.models import ForeignKey,ManyToManyField
+    #     for option in self.comb_filter: #option是FilterOption对象
+    #         # _field是当前字段
+    #         _field = self.model_class._meta.get_field(option.field_name)
+    #         # print(field_name,_field.choices)
+    #         '''
+    #         gender app02.UserInfo.gender
+    #         depart app02.UserInfo.depart
+    #         roles app02.UserInfo.roles
+    #         这是未加choices
+    #         '''
+    #         '''
+    #         gender ((1, '男'), (2, '女'), (3, '少伟'))
+    #         depart []
+    #         roles []
+    #         '''
+    #         if isinstance(_field,ForeignKey):
+    #             # 获取当前字段depart关联的表,并拿到所有字段. 是FK,
+    #             # print(_field.rel) # <ManyToOneRel: app02.userinfo>
+    #             # print(_field.rel.to) # <class 'app02.models.Department'>找到关联的表了 通过.objects.all()拿到所有字段
+    #             data_list.append( FilterRow(option.get_queryset(_field)) ) # 这里加FilterRow,是为了吧数据封装成FilterRow对象
+    #         elif isinstance(_field,ManyToManyField):
+    #             # data_list.append( FilterRow(_field.rel.to.objects.all()) )
+    #             data_list.append(FilterRow(option.get_queryset(_field)))
+    #         else:
+    #             data_list.append(FilterRow(option.get_choices(_field)) )
+    #     # 拿到所有的数据后,如何让它显示?   前端for循环两次拿得到
+    #     return data_list
+    # 组合搜索 yield版本
+    def gen_comb_filter(self):
+        '''生成器函数'''
+        '''它返回什么,页面就看到什么'''
+        # comb_filter = ['gender','depart','roles']
+        # 里面有三个对象.一个是大元祖,两个列表
+        from django.db.models import ForeignKey,ManyToManyField
+        for option in self.comb_filter: #option是FilterOption对象
+            # _field是当前字段
+            _field = self.model_class._meta.get_field(option.field_name)
+            # print(field_name,_field.choices)
+            '''
+            gender app02.UserInfo.gender
+            depart app02.UserInfo.depart
+            roles app02.UserInfo.roles
+            这是未加choices
+            '''
+            if isinstance(_field,ForeignKey):
+                # 获取当前字段depart关联的表,并拿到所有字段. 是FK,
+                # print(_field.rel) # <ManyToOneRel: app02.userinfo>
+                # print(_field.rel.to) # <class 'app02.models.Department'>找到关联的表了 通过.objects.all()拿到所有字段
+                row = FilterRow(option,option.get_queryset(_field),self.request.GET)  # 这里加FilterRow,是为了吧数据封装成FilterRow对象
+            elif isinstance(_field,ManyToManyField):
+                # data_list.append( FilterRow(_field.rel.to.objects.all()) )
+                row = FilterRow(option,option.get_queryset(_field),self.request.GET)
+            else:
+                row = FilterRow(option,option.get_choices(_field),self.request.GET)
+        # 拿到所有的数据后,如何让它显示?   前端for循环两次拿得到
+            yield row  # 可迭代对象, 对应该函数, 为什么它是可迭代对象,应为你看FilterRow. 它有__iter__方法
 class StarkConfig(object):
 
     def __init__(self,model_class,site):
@@ -249,6 +345,14 @@ class StarkConfig(object):
             result.extend(self.actions)
         return result
 
+    # 6. 组合搜索
+    '''它是在页面上可以看到的,所以找到changelist_view'''
+    comb_filter = []
+    def get_comb_filter(self):
+        result = []
+        if self.comb_filter:
+            result.extend(self.comb_filter)
+        return result
 
     # ############# 处理请求的方法 ################
 

@@ -34,7 +34,9 @@ class FilterRow(object):
         params = copy.deepcopy(self.request.GET) # 用户请求发来的数据
         # 要想动态,就给它设置属性
         params._mutable = True
-        current_id = params.get(self.option.field_name)
+        current_id = params.get(self.option.field_name)  # 单选
+        # 多选
+        current_id_list = params.getlist(self.option.field_name)
         '''如果用户请求发来的值,和我循环过程的值一样就表示它被选中,就要加active'''
 
         #点击全部后,要把后面响应数据去掉
@@ -50,12 +52,33 @@ class FilterRow(object):
                 pk,text = str(val[0]),val[1] # 这样就表示它是choice选项  ,这里是为了将((1,'男'),(2,'女')) 的id和text拿到
             else: # 它就是一个对象了
                 pk,text = str(val.pk),str(val)  # 这里给pk变为字符串是为了和用户发来的curent_id对比,看是否是被选中
-            params[self.option.field_name] = pk  # 我只拿我当前field_name对应的值,其他的我不管
-            url = "{0}?{1}".format(self.request.path_info,params.urlencode())
-            if current_id == pk:
-                yield mark_safe("<a class='active' href='{0}'>{1}</a>".format(url, text))  # 路径获取完成
+
+            '''单选相关'''
+            if not self.option.multi:
+                params[self.option.field_name] = pk  # 我只拿我当前field_name对应的值,其他的我不管
+                url = "{0}?{1}".format(self.request.path_info,params.urlencode())
+                if current_id == pk:
+                    yield mark_safe("<a class='active' href='{0}'>{1}</a>".format(url, text))  # 路径获取完成
+                else:
+                    yield mark_safe("<a href='{0}'>{1}</a>".format(url,text)) # 路径获取完成
             else:
-                yield mark_safe("<a href='{0}'>{1}</a>".format(url,text)) # 路径获取完成
+                '''多选相关 current_id_list = ['1','2']'''
+                # 如果是多选,要先做判断
+                _params = copy.deepcopy(params)
+                id_list = _params.getlist(self.option.field_name)
+
+                if pk in current_id_list:
+                    id_list.remove(pk)
+                    _params.setlist(self.option.field_name,id_list)
+                    url = "{0}?{1}".format(self.request.path_info,_params.urlencode())
+                    yield mark_safe("<a class='active' href='{0}'>{1}</a>".format(url, text))
+                else:
+                    id_list.append(pk)
+                    # params中被重新赋值
+                    _params.setlist(self.option.field_name,id_list)
+                    # 创建url
+                    url = "{0}?{1}".format(self.request.path_info, _params.urlencode())
+                    yield mark_safe("<a href='{0}'>{1}</a>".format(url, text))
 
 class ChangeList(object):
     def __init__(self,config,queryset):
@@ -388,6 +411,7 @@ class StarkConfig(object):
             ### 如果没返回值,就继续往下执行
 
         # 用户传过来的值,构造搜索条件
+        #392 ~ 403 单选操作
         comb_condition = {}
         option_list = self.get_comb_filter()  # 拿到所有的option对象,用于
 
@@ -400,9 +424,9 @@ class StarkConfig(object):
                     break
                 if flag:  # 在的话就构造条件
                     comb_condition["%s__in"%key] = value_list  # {'gender__in':[1],'depart__in':[1,2,]}
-                    
+
         # 搜索相关
-        queryset = self.model_class.objects.filter(self.get_search_condition()).filter(**comb_condition)
+        queryset = self.model_class.objects.filter(self.get_search_condition()).filter(**comb_condition).distinct()
         # print('queryset===',queryset)
 
         cl = ChangeList(self,queryset)

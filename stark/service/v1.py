@@ -387,9 +387,24 @@ class StarkConfig(object):
             pk_list = request.POST.get('pk')
             ### 如果没返回值,就继续往下执行
 
+        # 用户传过来的值,构造搜索条件
+        comb_condition = {}
+        option_list = self.get_comb_filter()  # 拿到所有的option对象,用于
+
+        for key in request.GET.keys():  # 用key拿值,是因为可能是多选,生成多个值.
+            value_list = request.GET.getlist(key)
+            flag = False
+            for option in option_list:
+                if option.field_name == key:
+                    flag = True
+                    break
+                if flag:  # 在的话就构造条件
+                    comb_condition["%s__in"%key] = value_list  # {'gender__in':[1],'depart__in':[1,2,]}
+                    
         # 搜索相关
-        queryset = self.model_class.objects.filter(self.get_search_condition())
+        queryset = self.model_class.objects.filter(self.get_search_condition()).filter(**comb_condition)
         # print('queryset===',queryset)
+
         cl = ChangeList(self,queryset)
         return render(request, 'stark/changelist.html', {'cl':cl})
 
